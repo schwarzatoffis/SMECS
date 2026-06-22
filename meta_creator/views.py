@@ -195,13 +195,15 @@ def from_registry(request):
     oep_api = os.environ.get('OEP_API_BASE')
     if oep_api is None:
         raise ConfigurationError("OEP_API_BASE environment variable is not set.")
+    oep_external_url = os.environ.get('OEP_EXTERNAL_URL')
+    if oep_external_url is None:
+        raise ConfigurationError("OEP_EXTERNAL_URL environment variable is not set.")
 
     if not registry_id:
         return render(request, 'meta_creator/error.html', {
             'error_message': "Missing registry_id parameter."
         })
 
-    oep_external_url = os.environ.get('OEP_EXTERNAL_URL', oep_api)
 
     try:
         api_url = f"{oep_api}/software/{registry_id}/"
@@ -236,7 +238,7 @@ def from_registry(request):
             "my_json_str": my_json_str,
             "from_registry": True,
             "registry_id": registry_id,
-            "oep_api": oep_external_url,
+            "oep_api": oep_api,
             "oep_external_url": oep_external_url,
         }, request))
 
