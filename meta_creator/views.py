@@ -3,6 +3,12 @@ This module contains views and functions for handling metadata in the Meta Creat
 
 It includes views for rendering templates, handling requests, and extracting metadata.
 """
+
+
+class ConfigurationError(Exception):
+    pass
+
+
 import json
 import os
 import requests
@@ -184,19 +190,16 @@ def from_registry(request):
 
     Query params:
         registry_id: The URL-encoded software ID
-        oep_api: Base URL of the OEP instance (e.g., http://web:8000) used for
-                 server-to-server requests from inside the Docker network.
     """
     registry_id = request.GET.get('registry_id', '')
-    oep_api = request.GET.get('oep_api', '')
+    oep_api = os.environ.get('OEP_API_BASE')
+    if oep_api is None:
+        raise ConfigurationError("OEP_API_BASE environment variable is not set.")
 
     if not registry_id:
         return render(request, 'meta_creator/error.html', {
             'error_message': "Missing registry_id parameter."
         })
-
-    if not oep_api:
-        oep_api = os.environ.get('OEP_API_BASE', 'http://oeplatform:8000')
 
     oep_external_url = os.environ.get('OEP_EXTERNAL_URL', oep_api)
 
