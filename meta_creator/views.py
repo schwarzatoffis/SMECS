@@ -201,7 +201,7 @@ def from_registry(request):
     oep_external_url = os.environ.get('OEP_EXTERNAL_URL', oep_api)
 
     try:
-        api_url = f"{oep_api}/api/v1/software/{registry_id}/"
+        api_url = f"{oep_api}/software/{registry_id}/"
         response = requests.get(api_url, timeout=30)
         if response.status_code == 404:
             return render(request, 'meta_creator/error.html', {
